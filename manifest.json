@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+ 
+  "name": "Js implants",
+  "description": "在网页中植入写好的js",
+  "version": "1.0",
+ 
+  "icons": {
+    "128" : "icon.png"
+  },
+  "permissions": [
+    "tabs", "storage", "activeTab", "scripting"
+  ],
+  "content_scripts": [
+    {
+      "js":["spider.js"],
+      "matches":[
+        "https://basic.smartedu.cn/*",
+        "http://127.0.0.1/*",
+        "http://localhost/*",
+        "file:///D:/web/spider-ebooks/*"
+      ]
+    }
+  ]
+}
