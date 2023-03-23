@@ -3,18 +3,22 @@ console.log('我是嵌入的js');
 const downloads = [];
 
 setTimeout(() => {
-  let title = document.querySelector("#main-content > div.content > div.index-module_special-edu-detail_aH1Nr > div > div > div.index-module_header_tG-zz > h3")
-  console.log(title.innerHTML)
-  if (title) {
-    title = title.innerHTML
-    let titleExist = window.localStorage.getItem(`title-${title}`)
-    if (!titleExist) {
-      window.localStorage.setItem(`title-${title}`, 1)
+  try {
+    let title = document.querySelector("#main-content > div.content > div.index-module_special-edu-detail_aH1Nr > div > div > div.index-module_header_tG-zz > h3")
+    console.log(title.innerHTML)
+    if (title) {
+      title = title.innerHTML
+      let titleExist = window.localStorage.getItem(`title-${title}`)
+      if (!titleExist) {
+        window.localStorage.setItem(`title-${title}`, 1)
+      } else {
+        return false
+      }
     } else {
       return false
     }
-  } else {
-    return false
+  } catch (error) {
+    console.log(error)
   }
   const selector = ".document-context"
   const ele = document.querySelector(selector)
