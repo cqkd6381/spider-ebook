@@ -3,9 +3,23 @@ console.log('我是嵌入的js');
 const downloads = [];
 
 setTimeout(() => {
+  let title = document.querySelector("#main-content > div.content > div.index-module_special-edu-detail_aH1Nr > div > div > div.index-module_header_tG-zz > h3")
+  console.log(title.innerHTML)
+  if (title) {
+    title = title.innerHTML
+    let titleExist = window.localStorage.getItem(`title-${title}`)
+    if (!titleExist) {
+      window.localStorage.setItem(`title-${title}`, 1)
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
   const selector = ".document-context"
   const ele = document.querySelector(selector)
   if (ele) {
+    // 刚进入时下载第一页
     getRenderElement(ele)
     const interval = setInterval(() => {
       getRenderElement(ele)
@@ -19,17 +33,17 @@ setTimeout(() => {
         clearInterval(interval)
       } else {
         ele.scrollTo({
-          top: scrollTop + (773 + 20) / 4, // 每次向下滚动1/4页（包括外边距）
+          top: scrollTop + (773 + 20) / 3, // 每次向下滚动1/2页（包括外边距）
           behavior: "smooth",
         });
       }
-    }, 500); // 每500毫秒滚动一次
+    }, 750); // 每750毫秒滚动一次
   } else {
     console.log(`选择器（${selector}）选取的元素不存在`)
   }
 }, 5000);
 
-function download (canvas, filename) {
+async function download (canvas, filename) {
   // 通过 API 获取目标 canvas 元素
   // const canvas = selector.querySelector("canvas");
 
@@ -56,9 +70,33 @@ function getRenderElement (ele) {
     const id = node.getAttribute('id')
     const hasDownloaded = downloads.findIndex(item => item === id)
     const canvas = node.querySelector("canvas");
-    if (hasDownloaded === -1 && canvas) {
-      download(canvas, id + '.jpg')
+    if (hasDownloaded === -1 && canvas && canvas.getAttribute('height') != 0) {
+      // 延迟100ms，确保canvas渲染完成
+      setTimeout(() => {
+        download(canvas, id + '.jpg')
+      }, 100);
       downloads.push(id)
     }
   });
+}
+
+/**
+ * 手动下载
+ * 仅需输入download2(页数)
+ */
+function download2 (id) {
+  const selector = `#page-${id} > canvas`
+  const filename = `page-${id}.jpg`
+  // 通过 API 获取目标 canvas 元素
+  const canvas = document.querySelector(selector);
+
+  // 创建一个 a 标签，并设置 href 和 download 属性
+  const el = document.createElement('a');
+  // 设置 href 为图片经过 base64 编码后的字符串，默认为 png 格式
+  el.href = canvas.toDataURL("image/jpeg", 1.0);
+  el.download = filename;
+
+  // 创建一个点击事件并对 a 标签进行触发
+  const event = new MouseEvent('click');
+  el.dispatchEvent(event);
 }
